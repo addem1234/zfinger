@@ -48,7 +48,7 @@ def me():
 
 missing = s3.get('missing.svg')['Body'].read()
 
-@app.route('/user/<user>/image')
+@app.route('/user/<user>/image', methods=['GET', 'POST', 'DELETE'])
 def user_image(user):
     if request.method == 'GET':
         if s3.exists(personal(path(user))):
@@ -62,11 +62,13 @@ def user_image(user):
 
     elif request.method == 'POST':
         image = request.files['file']
-        mimetype = from_buffer(image.stream.read(1024, mime=True))
-        return s3.put(personal(path(user)), image, mimetype)
+        mimetype = from_buffer(image.stream.read(1024), mime=True)
+        s3.put(personal(path(user)), image, mimetype)
+        return 'Image uploaded successfully'
 
     elif request.method == 'DELETE':
-        return s3.delete(personal(path(user)))
+        s3.delete(personal(path(user)))
+        return 'Image deleted successfully'
 
 @app.route('/user/<user>/image/<int:size>')
 def user_image_resize(user, size):
