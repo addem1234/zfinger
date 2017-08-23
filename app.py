@@ -16,7 +16,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 
 LOGIN_API_KEY = getenv('LOGIN_API_KEY')
 LOGIN_HOST = getenv('LOGIN_HOST')
-HODIS = 'http://hodis.datasektionen.se'
+API_HOST = getenv('API_HOST')
 
 def verify_token(token):
     payload = {'format': 'json', 'api_key': LOGIN_API_KEY}
@@ -89,13 +89,13 @@ def user_image_resize(user, size):
 # Redirects to the old API
 @app.route('/users/<query>')
 def users(query):
-    return redirect(HODIS + '/users/' + query)
+    return redirect(API_HOST + '/users/' + query)
 
 @app.route('/ugkthid/<id>')
 def ugkthid(id):
-    return redirect(HODIS + '/ugkthid/' + id)
+    return redirect(API_HOST + '/ugkthid/' + id)
 
 @app.route('/user/<user>')
 def user(user):
-    return redirect(HODIS + '/uid/' + user)
+    return redirect(API_HOST + '/uid/' + user)
 
