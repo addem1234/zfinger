@@ -58,7 +58,7 @@ def user_image(user):
             obj = s3.get(original(path(user)))
             return send_file(obj['Body'], mimetype=obj['ContentType'])
         else:
-            return Response(missing, content_type='image/svg')
+            return Response(missing, content_type='image/svg+xml')
 
     elif request.method == 'POST':
         image = request.files['file']
