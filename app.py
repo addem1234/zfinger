@@ -1,4 +1,5 @@
 from os import getenv
+from io import BytesIO
 
 from flask import Flask, request, redirect, jsonify, send_file, Response
 from werkzeug.contrib.fixers import ProxyFix
@@ -73,13 +74,13 @@ def user_image(user):
 @app.route('/user/<user>/image/<int:size>')
 def user_image_resize(user, size):
     if s3.exists(personal(path(user))):
-        tmp = s3.get(personal(path(user)))['Body']
+        tmp = BytesIO(s3.get(personal(path(user)))['Body'].read())
         image = Image.open(tmp)
         image.thumbnail((size, size), Image.ANTIALIAS)
         tmp.seek(0)
         image.save(tmp, 'JPEG')
         tmp.seek(0)
-        return tmp
+        return Response(tmp, content_type='image/jpeg')
     elif s3.exists(original(path(user))):
         return s3.get(original(path(user)))['Body']
     else:
