@@ -77,12 +77,18 @@ def user_image_resize(user, size):
         tmp = BytesIO(s3.get(personal(path(user)))['Body'].read())
         image = Image.open(tmp)
         image.thumbnail((size, size), Image.ANTIALIAS)
-        tmp.seek(0)
+        tmp = BytesIO()
         image.save(tmp, 'JPEG')
         tmp.seek(0)
         return Response(tmp, content_type='image/jpeg')
     elif s3.exists(original(path(user))):
-        return s3.get(original(path(user)))['Body']
+        tmp = BytesIO(s3.get(original(path(user)))['Body'].read())
+        image = Image.open(tmp)
+        image.thumbnail((size, size), Image.ANTIALIAS)
+        tmp = BytesIO()
+        image.save(tmp, 'JPEG')
+        tmp.seek(0)
+        return Response(tmp, content_type='image/jpeg')
     else:
         return missing
 
