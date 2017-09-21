@@ -95,13 +95,19 @@ def user_image_resize(user, size):
 # Redirects to the old API
 @app.route('/users/<query>')
 def users(query):
-    return redirect(API_HOST + '/users/' + query)
+    resp = redirect(API_HOST + '/users/' + query)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 @app.route('/ugkthid/<id>')
 def ugkthid(id):
-    return redirect(API_HOST + '/ugkthid/' + id)
+    resp = redirect(API_HOST + '/ugkthid/' + id)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 @app.route('/user/<user>')
 def user(user):
-    return redirect(API_HOST + '/uid/' + user)
+    resp = redirect(API_HOST + '/uid/' + user)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
