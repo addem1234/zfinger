@@ -5,25 +5,14 @@
 import React, {Component} from 'react'
 
 import RaisedButton from 'material-ui/RaisedButton'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
-import {Card, CardMedia, CardTitle} from 'material-ui/Card'
-
 
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import {cyan400, cyan500, red400} from 'material-ui/styles/colors'
+import {cyan400, cyan500} from 'material-ui/styles/colors'
 
-const styles = {
-  container: {
-    textAlign: 'center',
-    paddingTop: '200px',
-  },
-  button: {
-    margin: '12px'
-  }
-}
+import Upload from './Upload'
+import UserCard from './UserCard'
 
 const muiTheme = getMuiTheme({
   palette: {
@@ -37,21 +26,18 @@ class Main extends Component {
     super(props, context);
 
     this.state = {
-      open: false,
-      status: '',
       uid: '',
-      file: '',
-      body: false,
+      personal: false,
       token: location.search.substr(1).split('=')[1],
       text: '',
       results: [],
-      resultLimit: 10
+      resultLimit: 10,
+      open: false
     }
 
     fetch('/me?token='+this.state.token)
         .then(res => res.json())
         .then(res => this.setState(res))
-
   }
 
   doSearch = e => {
@@ -61,43 +47,10 @@ class Main extends Component {
           .then(results => this.setState({results, resultLimit: 10}))
   }
 
-  doUpload = () => {
-    const {uid, body} = this.state
-    if(uid) {
-      this.setState({status: 'Uploading...'})
-      fetch(`/user/${uid}/image`, {
-          method: 'POST',
-          body: body
-        }).then(res => res.text())
-          .then(res => this.setState({status: res}))
-    }
-  }
-
-  doDelete = () => {
-    const {uid} = this.state
-    this.setState({status: 'Deleting...'})
-    fetch(`/user/${uid}/image`, {method: 'DELETE'})
-      .then(res => res.text())
-      .then(res => this.setState({status: res}))
-  }
-
-  fileChange = e => {
-    const files = e.target.files || e.dataTransfer.files
-
-    if(!files.length) return
-
-    const file = files[0]
-    const filename = file.name
-    const body = new FormData()
-
-    body.append('file', file)
-    body.append('token', this.state.token)
-
-    this.setState({body, filename})
-  }
+  uploadClose = () => this.setState({open: false})
 
   render() {
-    const {open, results, uid, filename, resultLimit, status} = this.state
+    const { results, uid, resultLimit, token, open, personal } = this.state
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div style={{marginTop: '50px'}}>
@@ -117,14 +70,10 @@ class Main extends Component {
           <div id='content'>
             <Upload
               open={open}
-              uploadClose={() => this.setState({open: false})}
-              doUpload={this.doUpload}
-              fileChange={this.fileChange}
-              doDelete={this.doDelete}
               uid={uid}
-              filename={filename}
-              status={status}
-            />
+              personal={personal}
+              token={token}
+              uploadClose={this.uploadClose} />
 
             <form onSubmit={this.doSearch}>
                 <TextField
@@ -134,61 +83,25 @@ class Main extends Component {
                   fullWidth={true} />
             </form>
 
-            {results.filter((_, i) => i < resultLimit).map(result => <UserCard {...result} />)}
+            {
+              results
+                .filter((_, i) => i < resultLimit)
+                .map(result => <UserCard key={result.uid} {...result} />)
+            }
 
-            {results.length ? <RaisedButton label='Show more' fullWidth={true} onClick={() => this.setState({resultLimit: resultLimit + 10})} /> : false }
+            {
+              results.length < resultLimit ? false :
+              <RaisedButton label='Show more'
+                            fullWidth={true}
+                            style={{margin: '0.5%'}}
+                            onClick={() => this.setState({resultLimit: resultLimit + 10})} />
+            }
 
           </div>
         </div>
       </MuiThemeProvider>
     )
   }
-}
-
-function UserCard({cn, uid}) {
-  return (<Card style={{width: '50%', display: 'inline-block'}}>
-            <CardMedia>
-              <img src={`/user/${uid}/image`} />
-            </CardMedia>
-            <CardTitle title={cn} subtitle={uid + '@kth.se'} />
-          </Card>)
-}
-
-function Upload({open, uid, filename, uploadClose, doUpload, fileChange, doDelete, status}) {
-  return (
-    <Dialog
-      open={open}
-      title='Upload a new image'
-      actions={[<FlatButton label='Cancel' onTouchTap={uploadClose} style={styles.button} />,
-                <RaisedButton label={`Upload ${filename || ''}`} primary={true} disabled={!filename} onTouchTap={doUpload} style={styles.button} />]}
-      onRequestClose={uploadClose}>
-
-    <div style={{textAlign: 'center'}}>
-    <img style={{height: '150px'}} src={`/user/${uid}/image?${Date.now()}`} />
-
-    <div style={{display: 'inline-block', marginLeft: '10px', textAlign: 'left'}}>
-      <RaisedButton
-        containerElement='label'
-        label='Select new image'
-        style={styles.button}>
-          <input
-            type='file'
-            style={{display: 'none'}}
-            onChange={fileChange} />
-      </RaisedButton>
-      <br />
-      <RaisedButton
-        label='Delete'
-        backgroundColor={red400}
-        labelColor={'white'}
-        onTouchTap={doDelete}
-        style={styles.button} />
-      <br />
-      {status}
-    </div>
-    </div>
-
-  </Dialog>)
 }
 
 export default Main

@@ -42,10 +42,16 @@ def original(path): return 'original_images/{}'.format(path)
 @app.route('/me')
 def me():
     user = verify_token(request.args.get('token'))
-    return jsonify({
-        'uid': user,
-        'personal': s3.exists(personal(path(user)))
-    })
+    if user:
+        return jsonify({
+            'uid': user,
+            'personal': s3.exists(personal(path(user)))
+        })
+    else:
+        return jsonify({
+            'uid': 'unknown',
+            'personal': False
+        })
 
 missing = s3.get('missing.svg')['Body'].read()
 
@@ -61,28 +67,27 @@ def user_image(user):
         else:
             return Response(missing, content_type='image/svg+xml')
 
-    elif request.method == 'POST':
+    elif request.method == 'POST' and verify_token(request.args.get('token')):
         image = request.files['file']
         mimetype = from_buffer(image.stream.read(1024), mime=True)
         s3.put(personal(path(user)), image, mimetype)
-        return 'Image uploaded successfully'
+        return 'Personal image uploaded successfully'
 
-    elif request.method == 'DELETE':
+    elif request.method == 'DELETE' and verify_token(request.args.get('token')):
         s3.delete(personal(path(user)))
-        return 'Image deleted successfully'
+        return 'Personal image deleted successfully'
+    else:
+        return 'You can only edit you own picture!'
 
 @app.route('/user/<user>/image/<int:size>')
 def user_image_resize(user, size):
+    tmp = False
     if s3.exists(personal(path(user))):
         tmp = BytesIO(s3.get(personal(path(user)))['Body'].read())
-        image = Image.open(tmp)
-        image.thumbnail((size, size), Image.ANTIALIAS)
-        tmp = BytesIO()
-        image.save(tmp, 'JPEG')
-        tmp.seek(0)
-        return Response(tmp, content_type='image/jpeg')
     elif s3.exists(original(path(user))):
         tmp = BytesIO(s3.get(original(path(user)))['Body'].read())
+
+    if tmp:
         image = Image.open(tmp)
         image.thumbnail((size, size), Image.ANTIALIAS)
         tmp = BytesIO()
@@ -105,7 +110,7 @@ def ugkthid(id):
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
-@app.route('/user/<user>')
+@app.route('/user/<user>', methods=['GET', 'POST'])
 def user(user):
     resp = redirect(API_HOST + '/uid/' + user)
     resp.headers['Access-Control-Allow-Origin'] = '*'

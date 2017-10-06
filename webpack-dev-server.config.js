@@ -19,6 +19,20 @@ const config = {
     inline: true,
     port: 3000, // Port Number
     host: 'localhost', // Change to '0.0.0.0' for external facing server
+    proxy: {
+      '/user': {
+        target: 'http://localhost:5000',
+        secure: false
+      },
+      '/users': {
+        target: 'http://localhost:5000',
+        secure: false
+      },
+      '/me': {
+        target: 'http://localhost:5000',
+        secure: false
+      },
+    }
   },
   devtool: 'eval',
   output: {
