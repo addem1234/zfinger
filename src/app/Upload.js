@@ -16,7 +16,7 @@ class Upload extends Component {
       status: '',
       confirmOpen: false,
       body: false,
-      currentYear: new Date().getFullYear(),
+      currentYear: 0,
       yearStatus: false,
       yearError: false
     }
@@ -123,7 +123,7 @@ class Upload extends Component {
         src={`/user/${uid}/image?${Date.now()}`} />
 
       <div style={{display: 'inline-block', marginLeft: '10px', textAlign: 'left'}}>
-        <div>Here you can enter the year you started your studies at KTH:</div>
+        <div>Here you can enter the year you started at KTH:</div>
         <TextField
           hintText={`Currently ${currentYear != 0 ? currentYear : 'unknown'}`}
           errorText={ yearError ? yearError : false }
