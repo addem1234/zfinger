@@ -21,9 +21,14 @@ class Upload extends Component {
       yearError: false
     }
 
-    fetch(`https://hodis.datasektionen.se/uid/${props.uid}`)
-      .then(res => res.json())
-      .then(res => this.setState({currentYear: res.year}))
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.uid) {
+      fetch(`https://hodis.datasektionen.se/uid/${nextProps.uid}`)
+        .then(res => res.json())
+        .then(res => this.setState({currentYear: res.year}))
+    }
   }
 
   doUpload = () => {
