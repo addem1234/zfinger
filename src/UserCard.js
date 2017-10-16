@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 
-import {Card, CardMedia, CardTitle} from 'material-ui/Card'
+import Card, { CardContent, CardMedia } from 'material-ui/Card';
+import Typography from 'material-ui/Typography';
 
 export class UserCard extends Component {
   constructor(props) {
@@ -24,13 +25,28 @@ export class UserCard extends Component {
 
     return (
       <span>
-        <Card style={{width: width + '%', display: 'inline-block', margin: '0.5%', position: 'relative'}}
+        <Card
+          style={{width: width + '%', display: 'inline-block', margin: '0.5%', position: 'relative'}}
           onClick={() => this.setState({display: 'flex'})}>
           <CardMedia
-            style={{ height: width + 'vw', overflow: 'hidden'}}>
-            <img src={`/user/${uid}/image`} style={{cursor: 'pointer'}} />
+            image={`/user/${uid}/image`}
+            alt={uid}
+            style={{ height: width + 'vw', overflow: 'hidden', cursor: 'pointer'}}>
           </CardMedia>
-          <CardTitle style={{ background: '#fff', boxShadow: '0 -2px 5px rgba(0,0,0,0.1)', position: 'absolute', left: '0', right: '0', bottom: '0' }} title={cn} subtitle={uid + '@kth.se'} />
+          <CardContent style={{
+              boxShadow: '0 -2px 5px rgba(0,0,0,0.1)',
+              backgroundColor: '#fff',
+              position: 'absolute',
+              left: '0',
+              right: '0',
+              bottom: '0' }}>
+            <Typography type="title" style={{margin: 0}}>
+              {cn}
+            </Typography>
+            <Typography type="body1" color="secondary">
+              {uid + '@kth.se'}
+            </Typography>
+          </CardContent>
         </Card>
         <div
           style={{
@@ -48,6 +64,7 @@ export class UserCard extends Component {
           onClick={overlayClick} >
           <img
             src={`/user/${uid}/image`}
+            alt={uid}
             style={{marginTop: '10px', maxWidth: '95vw', maxHeight: '95vh'}} />
         </div>
       </span>)

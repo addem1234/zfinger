@@ -4,32 +4,49 @@
  */
 import React, {Component} from 'react'
 
-import RaisedButton from 'material-ui/RaisedButton'
+import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 
-import getMuiTheme from 'material-ui/styles/getMuiTheme'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import {cyan400, cyan500} from 'material-ui/styles/colors'
+import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles'
+import { cyan } from 'material-ui/colors'
 
 import Upload from './Upload'
 import UserCard from './UserCard'
 
-const muiTheme = getMuiTheme({
+const muiTheme = createMuiTheme({
   palette: {
-    primary1Color: cyan400,
-    accent1Color: cyan500,
+    primary1Color: cyan[400],
+    primary2Color: cyan[500],
   },
+  overrides: { // These are just weird but we need them, probably because material-ui 1.0 is in BETA
+    MuiButton: {
+      root: {
+        margin: 0
+      },
+      label: {
+        margin: 0
+      },
+      raisedPrimary: {
+        visibility: 'visible'
+      },
+      raised: {
+        width: 'inherit'
+      },
+      raisedAccent: {
+        width: 'inherit'
+      }
+    }
+  }
 })
 
-class Main extends Component {
+class App extends Component {
   constructor(props, context) {
     super(props, context);
 
     this.state = {
       uid: '',
       personal: false,
-      token: location.search.substr(1).split('=')[1],
-      text: '',
+      token: window.location.search.substr(1).split('=')[1],
       results: [],
       resultLimit: 10,
       open: false
@@ -42,17 +59,19 @@ class Main extends Component {
 
   doSearch = e => {
       e.preventDefault()
-      fetch(`/users/${this.state.text}`)
-          .then(res => res.json())
-          .then(results => this.setState({results, resultLimit: 10}))
+      if(e.target.value.length > 2)
+        fetch(`/users/${e.target.value}`)
+            .then(res => res.json())
+            .then(results => this.setState({results, resultLimit: 10}))
   }
 
   uploadClose = () => this.setState({open: false})
 
   render() {
     const { results, uid, resultLimit, token, open, personal } = this.state
+
     return (
-      <MuiThemeProvider muiTheme={muiTheme}>
+      <MuiThemeProvider theme={muiTheme}>
         <div style={{marginTop: '50px'}}>
           <header>
             <div className='header-inner'>
@@ -62,7 +81,11 @@ class Main extends Component {
                   <h2>zfinger</h2>
                 </div>
                 <div className='header-right col-md-2'>
-                  <a href='#' className='primary-action' onTouchTap={() => this.setState({open: true})}>My Face</a>
+                  <Button
+                    className='primary-action'
+                    onClick={() => this.setState({open: true})}>
+                    My Face
+                  </Button>
                 </div>
               </div>
             </div>
@@ -75,13 +98,11 @@ class Main extends Component {
               token={token}
               uploadClose={this.uploadClose} />
 
-            <form onSubmit={this.doSearch}>
-                <TextField
-                  hintText='Search'
-                  inputStyle={{boxShadow: 'none'}}
-                  onChange={(e, value) => this.setState({text: value})}
-                  fullWidth={true} />
-            </form>
+            <TextField autoFocus
+              fullWidth={true}
+              placeholder='Search'
+              style={{boxShadow: 'none'}}
+              onChange={this.doSearch} />
 
             {
               results
@@ -91,10 +112,11 @@ class Main extends Component {
 
             {
               results.length < resultLimit ? false :
-              <RaisedButton label='Show more'
-                            fullWidth={true}
-                            style={{margin: '0.5%'}}
-                            onClick={() => this.setState({resultLimit: resultLimit + 10})} />
+              <Button style={{margin: '0.5%'}}
+                      fullWidth={true}
+                      onClick={() => this.setState({resultLimit: resultLimit + 10})}>
+                Show more
+              </Button>
             }
 
           </div>
@@ -104,4 +126,4 @@ class Main extends Component {
   }
 }
 
-export default Main
+export default App
