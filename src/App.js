@@ -15,27 +15,7 @@ import UserCard from './UserCard'
 
 const muiTheme = createMuiTheme({
   palette: {
-    primary1Color: cyan[400],
-    primary2Color: cyan[500],
-  },
-  overrides: { // These are just weird but we need them, probably because material-ui 1.0 is in BETA
-    MuiButton: {
-      root: {
-        margin: 0
-      },
-      label: {
-        margin: 0
-      },
-      raisedPrimary: {
-        visibility: 'visible'
-      },
-      raised: {
-        width: 'inherit'
-      },
-      raisedAccent: {
-        width: 'inherit'
-      }
-    }
+    primary: cyan
   }
 })
 
@@ -101,7 +81,7 @@ class App extends Component {
             <TextField autoFocus
               fullWidth={true}
               placeholder='Search'
-              style={{boxShadow: 'none'}}
+              inputProps={{style: {boxShadow: 'none', border: 0}}}
               onChange={this.doSearch} />
 
             {

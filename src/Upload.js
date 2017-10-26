@@ -119,7 +119,7 @@ class Upload extends Component {
               placeholder={`Currently ${currentYear !== 0 ? currentYear : 'unknown'}`}
               helperText={yearError ? `This should be a number between 1983 and ${new Date().getFullYear()}` : false}
               error={ yearError }
-              onChange={(e, value) => this.updateYear(value)} />
+              onChange={e => this.updateYear(e.target.value)} />
             <span style={{marginLeft: '5px'}}>{ yearStatus }</span>
           </div>
         </DialogContent>
