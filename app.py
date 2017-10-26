@@ -20,7 +20,7 @@ API_HOST = getenv('API_HOST')
 
 def verify_token(token):
     payload = {'format': 'json', 'api_key': LOGIN_API_KEY}
-    response = get('https://{}/verify/{}'.format(LOGIN_HOST, token), params=payload)
+    response = get('{}/verify/{}'.format(LOGIN_HOST, token), params=payload)
     if response.status_code == 200:
         return response.json()['user']
     else:
@@ -32,7 +32,7 @@ def index():
     if user:
         return app.send_static_file('index.html')
     else:
-        return redirect('https://{}/login?callback={}?token='.format(LOGIN_HOST, url_quote(request.base_url)))
+        return redirect('{}/login?callback={}?token='.format(LOGIN_HOST, url_quote(request.base_url)))
 
 
 def path(user):     return '{}/{}/{}'.format(user[0], user[1], user)
