@@ -38,15 +38,17 @@ class Upload extends Component {
           body: body
         }).then(res => res.text())
           .then(res => this.setState({status: res}))
+          .catch(err => this.setState({status: err}))
     }
   }
 
   doDelete = () => {
     const { uid } = this.props
     this.setState({status: 'Deleting...', confirmOpen: false})
-    fetch(`/user/${uid}/image`, {method: 'DELETE'})
+    fetch(`/user/${uid}/image?token=${this.props.token}`, {method: 'DELETE'})
       .then(res => res.text())
       .then(res => this.setState({status: res}))
+      .catch(err => this.setState({status: err}))
   }
 
   updateYear = year => {
@@ -55,12 +57,13 @@ class Upload extends Component {
     const parsedYear = parseInt(year, 10);
     if(parsedYear >= 1983 && parsedYear <= thisYear) {
       this.setState({yearError: false})
-      fetch(`http://localhost:8080/uid/${uid}`, {
+      fetch(`https://hodis.datasektionen.se/uid/${uid}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({token, year: parsedYear})
       }).then(res => res.text())
         .then(res => this.setState({yearStatus: res, year}))
+        .catch(err => this.setState({yearStatus: err}))
     } else {
       this.setState({yearError: true})
     }

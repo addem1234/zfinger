@@ -36,8 +36,8 @@ def index():
 
 
 def path(user):     return '{}/{}/{}'.format(user[0], user[1], user)
-def personal(path): return 'personal_images/{}'.format(path)
-def original(path): return 'original_images/{}'.format(path)
+def personal(path): return 'personal_images/{}'.format(path.lower())
+def original(path): return 'original_images/{}'.format(path.lower())
 
 @app.route('/me')
 def me():
@@ -67,13 +67,13 @@ def user_image(user):
         else:
             return Response(missing, content_type='image/svg+xml')
 
-    elif request.method == 'POST' and verify_token(request.args.get('token')):
+    elif request.method == 'POST' and verify_token(request.values.get('token')):
         image = request.files['file']
         mimetype = from_buffer(image.stream.read(1024), mime=True)
         s3.put(personal(path(user)), image, mimetype)
         return 'Personal image uploaded successfully'
 
-    elif request.method == 'DELETE' and verify_token(request.args.get('token')):
+    elif request.method == 'DELETE' and verify_token(request.values.get('token')):
         s3.delete(personal(path(user)))
         return 'Personal image deleted successfully'
     else:

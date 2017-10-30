@@ -61,11 +61,11 @@ class App extends Component {
                   <h2>zfinger</h2>
                 </div>
                 <div className='header-right col-md-2'>
-                  <Button
+                  { uid ? <Button
                     className='primary-action'
                     onClick={() => this.setState({open: true})}>
                     My Face
-                  </Button>
+                  </Button> : false }
                 </div>
               </div>
             </div>
@@ -78,7 +78,8 @@ class App extends Component {
               token={token}
               uploadClose={this.uploadClose} />
 
-            <TextField autoFocus
+            <TextField
+              autoFocus
               fullWidth={true}
               placeholder='Search'
               inputProps={{style: {boxShadow: 'none', border: 0}}}
