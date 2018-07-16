@@ -42,7 +42,7 @@ class App extends Component {
       if(e.target.value.length > 2)
         fetch(`/users/${e.target.value}`)
             .then(res => res.json())
-            .then(results => this.setState({results, resultLimit: 10}))
+            .then(results => this.setState({results: results || [], resultLimit: 10}))
   }
 
   uploadClose = () => this.setState({open: false})
