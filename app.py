@@ -30,6 +30,7 @@ def verify_token(token):
 def index():
     user = verify_token(request.args.get('token'))
     if user:
+        print('valid user:', user)
         return app.send_static_file('index.html')
     else:
         return redirect('{}/login?callback={}?token='.format(LOGIN_HOST, url_quote(request.base_url)))
