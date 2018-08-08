@@ -43,6 +43,7 @@ class App extends Component {
         fetch(`/users/${e.target.value}`)
             .then(res => res.json())
             .then(results => this.setState({results: results || [], resultLimit: 10}))
+            .catch(err => console.error(err))
   }
 
   uploadClose = () => this.setState({open: false})
