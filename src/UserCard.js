@@ -13,7 +13,7 @@ export class UserCard extends Component {
   }
 
   render() {
-    const {givenName, cn, uid} = this.props
+    const {displayName, cn, uid} = this.props
     const {display} = this.state
 
     const overlayClick = e => {
@@ -41,7 +41,7 @@ export class UserCard extends Component {
               right: '0',
               bottom: '0' }}>
             <Typography type="title" style={{margin: 0}}>
-              {givenName || cn}
+              {displayName || cn}
             </Typography>
             <Typography type="body1" color="secondary">
               {uid + '@kth.se'}
