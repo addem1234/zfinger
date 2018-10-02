@@ -35,6 +35,7 @@ class App extends Component {
     fetch('/me?token='+this.state.token)
         .then(res => res.json())
         .then(res => this.setState(res))
+        .catch(err => console.log(err))
   }
 
   doSearch = e => {
@@ -42,6 +43,10 @@ class App extends Component {
       if(e.target.value.length > 2)
         fetch(`/users/${e.target.value}`)
             .then(res => res.json())
+            .then(res => {
+              if(res.error) return new Error(res.error)
+              else return res
+            })
             .then(results => this.setState({results: results || [], resultLimit: 10}))
             .catch(err => console.error(err))
   }
