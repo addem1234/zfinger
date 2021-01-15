@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+        ubuntu:
+                build:
+                        context: .
+                        dockerfile: Dockerfile
+                volumes:
+                        - type: bind 
+                          source: ./zfinger
+                          target: /zfinger
+                command: bash
+                env_file: 
+                        - variables.env
+                stdin_open: true
+                ports: 
+                        - "8000:8000"
