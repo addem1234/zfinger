@@ -44,14 +44,12 @@ def require_login(user_param_name='user'):
     def inner_decorator(func):
         @wraps(func)
         def wrapped_func(*args, **kwargs):
-            token = None
-            token = request.cookies.get('token')
-            if token is None:
-                token = request.args.get('token')
-                if token is not None:
-                    resp=redirect(f'{url_quote(request.base_url)}')
+            token = request.args.get('token')
+            if token is not None:
+                    resp = redirect(request.base_url)
                     resp.set_cookie('token',token,httponly=True,samesite='lax')
                     return resp
+            token = request.cookies.get('token')
             user = None if token is None else verify_token(token)
 
             if user is None:
