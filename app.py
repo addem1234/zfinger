@@ -45,10 +45,13 @@ def require_login(user_param_name='user'):
         @wraps(func)
         def wrapped_func(*args, **kwargs):
             token = None
-            if request.method == 'GET':
+            token = request.cookies.get('token')
+            if token is None:
                 token = request.args.get('token')
-            elif request.method == 'POST':
-                token = request.values.get('token')
+                if token is not None:
+                    resp=redirect(f'{url_quote(request.base_url)}')
+                    resp.set_cookie('token',token,httponly=True,samesite='lax')
+                    return resp
             user = None if token is None else verify_token(token)
 
             if user is None:
