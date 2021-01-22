@@ -45,7 +45,9 @@ def require_login(user_param_name='user'):
         @wraps(func)
         def wrapped_func(*args, **kwargs):
             token = request.args.get('token')
+            print(token)
             if token is not None:
+                if token != 'undefined':
                     resp = redirect(request.base_url)
                     resp.set_cookie('token',token,httponly=True,samesite='lax')
                     return resp
