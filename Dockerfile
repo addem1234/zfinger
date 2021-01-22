@@ -19,4 +19,4 @@ RUN pipenv sync
 # Do something to make sure this runs as a user account and not root inside the
 # container. Not super critical, but should probably be done.
 
-CMD ["pipenv", "run", "gunicorn", "-b", "0.0.0.0:8000", "app:app"]
+CMD ["pipenv", "run", "gunicorn", "-b", "0.0.0.0:5000", "app:app"]
