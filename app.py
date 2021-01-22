@@ -14,6 +14,8 @@ from PIL import Image
 
 import s3
 
+import re
+
 app = Flask(__name__, static_url_path='', static_folder='build')
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
@@ -27,6 +29,11 @@ login_cache: Dict[str, Tuple[str, datetime]] = dict()
 
 
 def verify_token(token: str):
+    match=re.search('^[A-Za-z0-9]+$', token)
+    print(match)
+    if match is None:
+        print("token:"+token+" did not match")
+        return None
     if token in login_cache and login_cache[token][1] > datetime.now() - timedelta(hours=1):
         return login_cache[token][0]
 
@@ -45,7 +52,6 @@ def require_login(user_param_name='user'):
         @wraps(func)
         def wrapped_func(*args, **kwargs):
             token = request.args.get('token')
-            print(token)
             if token is not None:
                 if token != 'undefined':
                     resp = redirect(request.base_url)
