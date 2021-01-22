@@ -30,9 +30,7 @@ login_cache: Dict[str, Tuple[str, datetime]] = dict()
 
 def verify_token(token: str):
     match=re.search('^[A-Za-z0-9]+$', token)
-    print(match)
     if match is None:
-        print("token:"+token+" did not match")
         return None
     if token in login_cache and login_cache[token][1] > datetime.now() - timedelta(hours=1):
         return login_cache[token][0]
