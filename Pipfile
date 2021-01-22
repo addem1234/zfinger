@@ -6,13 +6,12 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-boto3 = "*"
-python-magic = "*"
-requests = "*"
-gunicorn = "*"
-Flask = "*"
-Flask-Cors = "*"
-Pillow = "*"
+boto3 = "~=1.16.58"
+requests = "~=2.25.1"
+gunicorn = "~=20.0.4"
+flask = "~=1.1.2"
+pillow = "~=8.1.0"
+python-magic = "~=0.4.18"
 
 [requires]
 python_version = "3.8"
