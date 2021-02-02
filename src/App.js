@@ -32,7 +32,7 @@ class App extends Component {
       open: false
     }
 
-    fetch('/me?token='+this.state.token)
+    fetch('/me')
         .then(res => res.json())
         .then(res => this.setState(res))
         .catch(err => console.log(err))
