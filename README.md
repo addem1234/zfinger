@@ -31,15 +31,15 @@ Information displayed in `hodis` is `ugKthid`,`uid`,`cn`,`mail`,`givenName`,`dis
 ```
 
 ## Dependencies
-Depends on login, hodis is refered to but not integral.
+Depends on login, hodis is referred to but not integral.
 
 ## Development
-With docker installed, run `docker-compose up --build`, <localhost.datasektionen.se:5000> will be the local development version.
-Will look for ENV in a file called variables.env.
+With docker and docker-compose installed, run `docker-compose up --build`, <localhost.datasektionen.se:5000> will be the local development version.
+Will look for environment variables in a file called variables.env.
 
 ## Production
-See development, on production machine.
+Build the docker image, set the required environment variables and run the container.
+When deploying to dokku, simply use git push and set the set the environment variables using dokku config.
 
 ## PLs permissions
-None, merely checks if user can login in, not any permissions.
-
+None
