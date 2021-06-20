@@ -17,6 +17,9 @@ def put(path, file, mimetype):
         Key=path,
         Body=file,
         ContentType=mimetype
+        Metadata={
+            'Cache-Control': 'max-age=604800'
+        }
     )
 
 def delete(path):
