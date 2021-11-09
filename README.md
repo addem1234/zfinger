@@ -19,6 +19,13 @@ If log-in is required, user will be redirected to `login.kth.se` if not already.
 
 Information displayed in `hodis` is `ugKthid`,`uid`,`on`,`mail`,`givenName`,`displayName`,`year` and`tag`.
 
+## How to run
+1. Define environment variables in `.env`
+1. `pipenv install`
+1. `pipenv shell`
+1. `flask run`
+
+## Environment variables
 Required environment variables:
 ```
   AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
@@ -26,6 +33,7 @@ Required environment variables:
   LOGIN_API_KEY=<LOGIN_API_KEY>
 
 ## Optional
+  S3_BUCKET=zfinger
   HODIS_HOST=https://hodis.datasektionen.se
   LOGIN_HOST=https://login2.datasektionen.se
 ```

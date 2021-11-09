@@ -104,6 +104,7 @@ class Upload extends Component {
           <div style={{display: 'inline-block', marginLeft: '10px', textAlign: 'left'}}>
             <div>
               Use the buttons below to change your image.
+              <p>NOTE: It takes about one hour for the new image to show here, because of caching.</p>
             </div>
             <Button raised component='label'>
                 Select new image

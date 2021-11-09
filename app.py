@@ -4,6 +4,7 @@ from typing import Dict, Tuple
 
 from flask import Flask, request, redirect, jsonify, send_file, Response, abort
 from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.datastructures import Headers
 from werkzeug.urls import url_quote
 
 from functools import wraps
@@ -24,9 +25,13 @@ LOGIN_HOST = getenv('LOGIN_HOST', 'https://login.datasektionen.se')
 HODIS_HOST = getenv('HODIS_HOST', 'https://hodis.datasektionen.se')
 
 MISSING = s3.get('missing.svg')['Body'].read()
+MISSING_JPG = s3.get('missing.jpeg')['Body'].read()
 
 login_cache: Dict[str, Tuple[str, datetime]] = dict()
 
+headers = Headers()
+# 3600*24*31 = 2678400 i.e. one month
+headers.add('Cache-Control', 'max-age=2678400')
 
 def verify_token(token: str):
     match = re.search('^[A-Za-z0-9]+$', token)
@@ -101,12 +106,13 @@ def me(user):
 def user_image(user):
     if s3.exists(personal_path(user)):
         obj = s3.get(personal_path(user))
-        return send_file(obj['Body'], mimetype=obj['ContentType'])
+        # cache_timeout sets Cache-Control: max-age=x
+        return send_file(obj['Body'], mimetype=obj['ContentType'], cache_timeout=2678400)
     elif s3.exists(original_path(user)):
         obj = s3.get(original_path(user))
-        return send_file(obj['Body'], mimetype=obj['ContentType'])
+        return send_file(obj['Body'], mimetype=obj['ContentType'], cache_timeout=2678400)
     else:
-        return Response(MISSING, content_type='image/svg+xml')
+        return Response(MISSING, content_type='image/svg+xml', headers=headers)
 
 
 @app.route('/user/<user>/image', methods=['POST'])
@@ -132,20 +138,30 @@ def delete_user_image(user, req_user):
 @app.route('/user/<user>/image/<int:size>', methods=['GET'])
 def user_image_resize(user, size):
     tmp = False
+    mimetype = ""
     if s3.exists(personal_path(user)):
-        tmp = BytesIO(s3.get(personal_path(user))['Body'].read())
+        obj = s3.get(personal_path(user))
+        tmp = BytesIO(obj['Body'].read())
+        mimetype = obj['ContentType']
     elif s3.exists(original_path(user)):
-        tmp = BytesIO(s3.get(original_path(user))['Body'].read())
+        obj = s3.get(original_path(user))
+        tmp = BytesIO(obj['Body'].read())
+        mimetype = obj['ContentType']
 
     if not tmp:
-        tmp = BytesIO(MISSING)
+        # Can't resize svg, resize jpg instead
+        tmp = BytesIO(MISSING_JPG)
 
     image = Image.open(tmp)
+    # Convert pngs to jpg to allow resize.
+    # JPGs have no alpha-channel, we crash and get 500 if we don't do this conversion
+    if mimetype != "image/jpeg" or mimetype != "image/jpg":
+        image = image.convert("RGB")
     image.thumbnail((size, size), Image.ANTIALIAS)
     tmp = BytesIO()
     image.save(tmp, 'JPEG')
     tmp.seek(0)
-    return Response(tmp, content_type='image/jpeg')
+    return Response(tmp, content_type='image/jpeg', headers=headers)
 
 
 # Redirects to the old API
