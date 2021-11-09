@@ -140,13 +140,9 @@ def user_image_resize(user, size):
     tmp = False
     mimetype = ""
     if s3.exists(personal_path(user)):
-        obj = s3.get(personal_path(user))
-        tmp = BytesIO(obj['Body'].read())
-        mimetype = obj['ContentType']
+        tmp = BytesIO(s3.get(personal_path(user))['Body'].read())
     elif s3.exists(original_path(user)):
-        obj = s3.get(original_path(user))
-        tmp = BytesIO(obj['Body'].read())
-        mimetype = obj['ContentType']
+        tmp = BytesIO(s3.get(original_path(user))['Body'].read())
 
     if not tmp:
         # Can't resize svg, resize jpg instead
