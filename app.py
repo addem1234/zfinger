@@ -142,22 +142,15 @@ def user_image_resize(user, size):
     if s3.exists(personal_path(user)):
         obj = s3.get(personal_path(user))
         tmp = BytesIO(obj['Body'].read())
-        mimetype = obj['ContentType']
     elif s3.exists(original_path(user)):
         obj = s3.get(original_path(user))
         tmp = BytesIO(obj['Body'].read())
-        mimetype = obj['ContentType']
 
     if not tmp:
         # Can't resize svg, resize jpg instead
         tmp = BytesIO(MISSING_JPG)
 
     image = Image.open(tmp)
-    # Convert pngs to jpg to allow resize.
-    # JPGs have no alpha-channel, we crash and get 500 if we don't do this conversion
-    if mimetype != "image/jpeg" and mimetype != "image/jpg":
-        out = image.convert("RGB")
-        image = out
     image.thumbnail((size, size), Image.ANTIALIAS)
     tmp = BytesIO()
     image.save(tmp, 'JPEG')
