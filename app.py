@@ -155,7 +155,7 @@ def user_image_resize(user, size):
     image = Image.open(tmp)
     # Convert pngs to jpg to allow resize.
     # JPGs have no alpha-channel, we crash and get 500 if we don't do this conversion
-    if mimetype != "image/jpeg" or mimetype != "image/jpg":
+    if mimetype != "image/jpeg" and mimetype != "image/jpg":
         out = image.convert("RGB")
         image = out
     image.thumbnail((size, size), Image.ANTIALIAS)
