@@ -149,7 +149,6 @@ def user_image_resize(user, size):
         tmp = BytesIO(MISSING_JPG)
 
     image = Image.open(tmp)
-
     image.thumbnail((size, size), Image.ANTIALIAS)
     tmp = BytesIO()
     image.save(tmp, 'JPEG')
