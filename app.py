@@ -122,6 +122,9 @@ def edit_user_image(user, req_user):
         abort(403)
     image = request.files['file']
     mimetype = from_buffer(image.stream.read(1024), mime=True)
+    if mimetype not in ['image/jpeg', 'image/png']:
+        abort(400, 'The format of this file is invalid, we only allow, png and jp(e)g')
+
     s3.put(personal_path(user), image, mimetype)
     return "Personal image uploaded successfully"
 
