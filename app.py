@@ -6,7 +6,6 @@ from flask import Flask, request, redirect, jsonify, send_file, Response, abort
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.datastructures import Headers
 from werkzeug.urls import url_quote
-from werkzeug.utils import secure_filename
 
 from functools import wraps
 from datetime import datetime, timedelta
@@ -33,10 +32,6 @@ login_cache: Dict[str, Tuple[str, datetime]] = dict()
 headers = Headers()
 # 3600*24*31 = 2678400 i.e. one month
 headers.add('Cache-Control', 'max-age=2678400')
-
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def verify_token(token: str):
     match = re.search('^[A-Za-z0-9]+$', token)
@@ -126,12 +121,6 @@ def edit_user_image(user, req_user):
     if user != req_user:
         abort(403)
     image = request.files['file']
-
-    if image is None or not allowed_file(image.filename):
-        abort(400, "The format of this file is invalid, we only allow, .png, .jpg and .jpeg")
-
-    image.filename = secure_filename(image.filename)
-
     mimetype = from_buffer(image.stream.read(1024), mime=True)
     s3.put(personal_path(user), image, mimetype)
     return "Personal image uploaded successfully"
