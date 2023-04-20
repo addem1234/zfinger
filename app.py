@@ -4,7 +4,6 @@ from typing import Dict, Tuple
 
 from flask import Flask, request, redirect, jsonify, send_file, Response, abort
 from werkzeug.middleware.proxy_fix import ProxyFix
-from werkzeug.datastructures import Headers
 from werkzeug.urls import url_quote
 
 from functools import wraps
@@ -29,9 +28,7 @@ MISSING_JPG = s3.get('missing.jpeg')['Body'].read()
 
 login_cache: Dict[str, Tuple[str, datetime]] = dict()
 
-headers = Headers()
-# 3600*24*31 = 2678400 i.e. one month
-headers.add('Cache-Control', 'max-age=2678400')
+cache_timeout = 2678400
 
 def verify_token(token: str):
     match = re.search('^[A-Za-z0-9]+$', token)
@@ -107,12 +104,15 @@ def user_image(user):
     if s3.exists(personal_path(user)):
         obj = s3.get(personal_path(user))
         # cache_timeout sets Cache-Control: max-age=x
-        return send_file(obj['Body'], mimetype=obj['ContentType'], cache_timeout=2678400)
+        return send_file(obj['Body'], mimetype=obj['ContentType'], cache_timeout=cache_timeout)
     elif s3.exists(original_path(user)):
         obj = s3.get(original_path(user))
-        return send_file(obj['Body'], mimetype=obj['ContentType'], cache_timeout=2678400)
+        return send_file(obj['Body'], mimetype=obj['ContentType'], cache_timeout=cache_timeout)
     else:
-        return Response(MISSING, content_type='image/svg+xml', headers=headers)
+        resp = Response(MISSING, content_type='image/svg+xml')
+        resp.headers['Cache-Control'] = f"public, max-age={cache_timeout}"
+        resp.headers['Expires'] = (datetime.now() + timedelta(seconds=cache_timeout)).strftime('%a, %d %b %Y %H:%M:%S GMT')
+        return resp
 
 
 @app.route('/user/<user>/image', methods=['POST'])
@@ -153,7 +153,11 @@ def user_image_resize(user, size):
     tmp = BytesIO()
     image.save(tmp, 'JPEG')
     tmp.seek(0)
-    return Response(tmp, content_type='image/jpeg')
+
+    resp = Response(tmp, content_type='image/jpeg')
+    resp.headers['Cache-Control'] = f"public, max-age={cache_timeout}"
+    resp.headers['Expires'] = (datetime.now() + timedelta(seconds=cache_timeout)).strftime('%a, %d %b %Y %H:%M:%S GMT')
+    return resp
 
 
 # Redirects to the old API

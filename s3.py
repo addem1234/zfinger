@@ -1,7 +1,7 @@
 import boto3
 from os import getenv
 
-BUCKET = getenv('S3_BUCKET', 'zfinger')
+BUCKET = getenv('S3_BUCKET', 'zfinger-test')
 
 client = boto3.client('s3')
 bucket = boto3.resource('s3').Bucket(BUCKET)
