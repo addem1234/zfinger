@@ -28,8 +28,7 @@ MISSING_JPG = s3.get('missing.jpeg')['Body'].read()
 
 login_cache: Dict[str, Tuple[str, datetime]] = dict()
 
-# 3600 * 24 * 31 = 2678400 ie one month
-cache_timeout = 2678400
+cache_timeout = 3600 * 24 * 31 # one month
 
 def verify_token(token: str):
     match = re.search('^[A-Za-z0-9]+$', token)
