@@ -35,5 +35,5 @@ Required environment variables:
 ## Optional
   S3_BUCKET=zfinger
   HODIS_HOST=https://hodis.datasektionen.se
-  LOGIN_HOST=https://login2.datasektionen.se
+  LOGIN_HOST=https://login.datasektionen.se
 ```
