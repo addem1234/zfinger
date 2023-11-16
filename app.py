@@ -77,7 +77,6 @@ def index(user):
     # Don't give a flying flamingo about the user, just that you're logged in
     return app.send_static_file('index.html')
 
-
 def path(user):
     return '{}/{}/{}'.format(user[0], user[1], user)
 

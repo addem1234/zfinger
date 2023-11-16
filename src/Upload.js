@@ -13,19 +13,8 @@ class Upload extends Component {
       status: '',
       confirmOpen: false,
       body: false,
-      currentYear: 0,
-      yearStatus: false,
-      yearError: false
     }
 
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if(nextProps.uid) {
-      fetch(`https://hodis.datasektionen.se/uid/${nextProps.uid}`)
-        .then(res => res.json())
-        .then(res => this.setState({currentYear: res.year}))
-    }
   }
 
   doUpload = () => {
@@ -51,24 +40,6 @@ class Upload extends Component {
       .catch(err => this.setState({status: err}))
   }
 
-  updateYear = year => {
-    const { uid, token } = this.props
-    const thisYear = new Date().getFullYear();
-    const parsedYear = parseInt(year, 10);
-    if(parsedYear >= 1983 && parsedYear <= thisYear) {
-      this.setState({yearError: false})
-      fetch(`https://hodis.datasektionen.se/uid/${uid}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({token, year: parsedYear})
-      }).then(res => res.text())
-        .then(res => this.setState({yearStatus: res, year}))
-        .catch(err => this.setState({yearStatus: err}))
-    } else {
-      this.setState({yearError: true})
-    }
-  }
-
   fileChange = e => {
     const files = e.target.files || e.dataTransfer.files
 
@@ -91,7 +62,6 @@ class Upload extends Component {
     const { uid, personal } = this.props
 
     const { filename, status, confirmOpen } = this.state
-    const { yearError, yearStatus, currentYear } = this.state
 
     return (
       <Dialog open={open} onRequestClose={uploadClose}>
@@ -118,13 +88,6 @@ class Upload extends Component {
             <span>
               {status}
             </span>
-            <div>Here you can enter the year you started at KTH:</div>
-            <TextField
-              placeholder={`Currently ${currentYear !== 0 ? currentYear : 'unknown'}`}
-              helperText={yearError ? `This should be a number between 1983 and ${new Date().getFullYear()}` : false}
-              error={ yearError }
-              onChange={e => this.updateYear(e.target.value)} />
-            <span style={{marginLeft: '5px'}}>{ yearStatus }</span>
           </div>
         </DialogContent>
         <DialogActions>
