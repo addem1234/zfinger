@@ -153,6 +153,8 @@ def user_image_resize(user, size):
     image = Image.open(tmp)
     image.thumbnail((size, size), Image.ANTIALIAS)
     tmp = BytesIO()
+    if image.mode in ("RGBA", "P"): 
+        image = image.convert("RGB")
     image.save(tmp, 'JPEG')
     tmp.seek(0)
 
