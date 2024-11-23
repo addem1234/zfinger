@@ -28,12 +28,13 @@ Information displayed in `hodis` is `ugKthid`,`uid`,`on`,`mail`,`givenName`,`dis
 ## Environment variables
 Required environment variables:
 ```
-  AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
-  AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
-  LOGIN_API_KEY=<LOGIN_API_KEY>
+AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
+AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
+LOGIN_API_KEY=<LOGIN_API_KEY>
 
 ## Optional
-  S3_BUCKET=zfinger
-  HODIS_HOST=https://hodis.datasektionen.se
-  LOGIN_HOST=https://login.datasektionen.se
+S3_BUCKET=zfinger
+HODIS_HOST=https://hodis.datasektionen.se
+LOGIN_API_URL=https://login.datasektionen.se
+LOGIN_FRONTEND_URL=https://login.datasektionen.se
 ```

@@ -3,6 +3,6 @@ services:
   web:
     build: .
     env_file:
-      - variables.env
+      - .env
     ports:
       - "5000:5000"

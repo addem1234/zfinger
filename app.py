@@ -20,7 +20,8 @@ app = Flask(__name__, static_url_path='', static_folder='build')
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
 LOGIN_API_KEY = getenv('LOGIN_API_KEY')
-LOGIN_HOST = getenv('LOGIN_HOST', 'https://login.datasektionen.se')
+LOGIN_API_URL = getenv('LOGIN_API_URL', 'https://login.datasektionen.se')
+LOGIN_FRONTEND_URL = getenv('LOGIN_FRONTEND_URL', 'https://login.datasektionen.se')
 HODIS_HOST = getenv('HODIS_HOST', 'https://hodis.datasektionen.se')
 
 MISSING = s3.get('missing.svg')['Body'].read()
@@ -38,7 +39,7 @@ def verify_token(token: str):
         return login_cache[token][0]
 
     payload = {'format': 'json', 'api_key': LOGIN_API_KEY}
-    response = get(f'{LOGIN_HOST}/verify/{token}', params=payload)
+    response = get(f'{LOGIN_API_URL}/verify/{token}', params=payload)
     if response.status_code == 200:
         user = response.json()['user']
         login_cache[token] = (user, datetime.now())
@@ -60,7 +61,7 @@ def require_login(user_param_name='user'):
             user = None if token is None else verify_token(token)
 
             if user is None:
-                return redirect(f'{LOGIN_HOST}/login?callback={url_quote(request.base_url)}?token=')
+                return redirect(f'{LOGIN_FRONTEND_URL}/login?callback={url_quote(request.base_url)}?token=')
 
             kwargs[user_param_name] = user
             return func(*args, **kwargs)
