@@ -35,7 +35,7 @@ LOGIN_API_KEY={{ .login_api_key }}
 {{ end }}
 AWS_ACCESS_KEY_ID=AKIATUCF4UAO3OIEOFJA
 LOGIN_FRONTEND_URL=https://logout.datasektionen.se/legacyapi
-LOGIN_API_URL=http://logout.nomad.dsekt.internal.se/legacyapi
+LOGIN_API_URL=http://logout.nomad.dsekt.internal/legacyapi
 HODIS_HOST=https://hodis.datasektionen.se
 ENV
         destination = "local/.env"

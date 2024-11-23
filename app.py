@@ -32,7 +32,7 @@ login_cache: Dict[str, Tuple[str, datetime]] = dict()
 cache_timeout = 3600 * 24 * 31 # one month
 
 def verify_token(token: str):
-    match = re.search('^[A-Za-z0-9]+$', token)
+    match = re.search('^[A-Za-z0-9\-]+$', token)
     if match is None:
         return None
     if token in login_cache and login_cache[token][1] > datetime.now() - timedelta(hours=1):
